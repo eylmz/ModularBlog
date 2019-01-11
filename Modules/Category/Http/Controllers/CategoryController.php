@@ -2,9 +2,11 @@
 
 namespace Modules\Category\Http\Controllers;
 
+use Modules\Category\Entities\Category;
+use Modules\Category\Http\Requests\StoreCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
@@ -14,7 +16,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('category::index');
+        $categories = Category::with('posts')->get();
+        return view('category::index', compact('categories'));
     }
 
     /**
@@ -31,8 +34,13 @@ class CategoryController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(StoreCategory $request)
     {
+        $category = new Category();
+        $category->fill($request->all());
+        $category->save();
+
+        return redirect()->route('categories.index')->with('success', 'create');
     }
 
     /**
@@ -48,9 +56,10 @@ class CategoryController extends Controller
      * Show the form for editing the specified resource.
      * @return Response
      */
-    public function edit()
+    public function edit($id)
     {
-        return view('category::edit');
+        $category = Category::findOrFail($id);
+        return view('category::edit', compact('category'));
     }
 
     /**
@@ -58,15 +67,22 @@ class CategoryController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function update(Request $request)
+    public function update(StoreCategory $request, $id)
     {
+        $category = Category::findOrFail($id);
+        $category->fill($request->all());
+        $category->save();
+
+        return redirect()->route('categories.index')->with('success', 'update');
     }
 
     /**
      * Remove the specified resource from storage.
      * @return Response
      */
-    public function destroy()
+    public function destroy($id)
     {
+        Category::destroy($id);
+        return redirect()->route('categories.index')->with('success', 'delete');
     }
 }
