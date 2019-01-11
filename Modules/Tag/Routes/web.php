@@ -11,6 +11,11 @@
 |
 */
 
-Route::prefix('tag')->group(function() {
-    Route::get('/', 'TagController@index');
+Route::group(["prefix" => "tags", "as" => "tags."],function() {
+    Route::get('/', 'TagController@index')->name('index');
+    Route::post('/', 'TagController@store')->name('store');
+    Route::get('/create', 'TagController@create')->name('create');
+    Route::get('/{id}/edit', 'TagController@edit')->name('edit');
+    Route::post('/{id}', 'TagController@update')->name('update');
+    Route::get('/{id}/delete', 'TagController@destroy')->name('destroy');
 });

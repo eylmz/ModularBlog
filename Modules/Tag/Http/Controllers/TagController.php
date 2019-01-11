@@ -2,6 +2,8 @@
 
 namespace Modules\Tag\Http\Controllers;
 
+use Modules\Tag\Entities\Tag;
+use Modules\Tag\Http\Requests\StoreTag;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -14,7 +16,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        return view('tag::index');
+        $tags = Tag::with('posts')->get();
+        return view('tag::index', compact('tags'));
     }
 
     /**
@@ -31,8 +34,13 @@ class TagController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(StoreTag $request)
     {
+        $tag = new Tag();
+        $tag->fill($request->all());
+        $tag->save();
+
+        return redirect()->route('tags.index')->with('success', 'create');
     }
 
     /**
@@ -48,9 +56,10 @@ class TagController extends Controller
      * Show the form for editing the specified resource.
      * @return Response
      */
-    public function edit()
+    public function edit($id)
     {
-        return view('tag::edit');
+        $tag = Tag::findOrFail($id);
+        return view('tag::edit', compact('tag'));
     }
 
     /**
@@ -58,15 +67,22 @@ class TagController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function update(Request $request)
+    public function update(StoreTag $request, $id)
     {
+        $tag = Tag::findOrFail($id);
+        $tag->fill($request->all());
+        $tag->save();
+
+        return redirect()->route('tags.index')->with('success', 'update');
     }
 
     /**
      * Remove the specified resource from storage.
      * @return Response
      */
-    public function destroy()
+    public function destroy($id)
     {
+        Tag::destroy($id);
+        return redirect()->route('tags.index')->with('success', 'delete');
     }
 }
