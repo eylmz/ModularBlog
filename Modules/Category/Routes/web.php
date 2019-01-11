@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(["prefix" => "category", "as" => "categories."],function() {
+Route::group(["prefix" => "categories", "as" => "categories."],function() {
     Route::get('/', "CategoryController@index")->name('index');
     Route::post('/', "CategoryController@store")->name('store');
     Route::get('/create', "CategoryController@create")->name('create');
