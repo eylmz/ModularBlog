@@ -4,6 +4,7 @@ namespace Modules\Blog\Http\Controllers;
 
 use Modules\Blog\Entities\Post;
 use Modules\Category\Entities\Category;
+use Modules\Tag\Entities\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -16,12 +17,8 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $post = new Post();
-        $post->name = 'Test';
-        $post->content = 'Content';
-        $post->save();
-        $post->categories()->saveMany([new Category(["name" => "CategoryTest"])]);
-        return view('blog::index');
+        $posts = Post::with(["categories", "tags"])->get();
+        return view('blog::index', compact('posts'));
     }
 
     /**
