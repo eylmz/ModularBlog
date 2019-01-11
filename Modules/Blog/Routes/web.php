@@ -11,8 +11,10 @@
 |
 */
 
+Route::get('/blog', 'BlogController@index');
+
 Route::group(["middleware" => ["web", "auth"], "prefix" => "blog"],function() {
-    Route::get('/', 'BlogController@index');
+    // Route::get('/', 'BlogController@index');
     Route::get('/test', function (){
          echo 'test';
     });
