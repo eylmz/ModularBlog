@@ -17,7 +17,14 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::with('posts')->get();
-        return view('category::index', compact('categories'));
+        $trashCount = Category::onlyTrashed()->count();
+        return view('category::index', compact('categories', 'trashCount'));
+    }
+
+    public function trashes(){
+        $categories = Category::with('posts')->onlyTrashed()->get();
+        $categoryCount = Category::count();
+        return view('category::trashes', compact('categories', 'categoryCount'));
     }
 
     /**
@@ -40,7 +47,7 @@ class CategoryController extends Controller
         $category->fill($request->all());
         $category->save();
 
-        return redirect()->route('categories.index')->with('success', 'create');
+        return redirect()->route('categories.index')->with('success', __("messages.create.success"));
     }
 
     /**
@@ -73,7 +80,7 @@ class CategoryController extends Controller
         $category->fill($request->all());
         $category->save();
 
-        return redirect()->route('categories.index')->with('success', 'update');
+        return redirect()->route('categories.index')->with('success', __("messages.update.success"));
     }
 
     /**
@@ -83,6 +90,27 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         Category::destroy($id);
-        return redirect()->route('categories.index')->with('success', 'delete');
+        return redirect()->route('categories.index')->with('success', __("messages.delete.success"));
+    }
+
+    public function forceDestroy($id){
+        Category::where("id", $id)->forceDelete();
+        return redirect()->route('categories.trashes')->with('success', __("messages.delete.success"));
+    }
+
+    public function restore($id){
+        Category::withTrashed()->where('id', $id)->restore();
+        return redirect()->route('categories.trashes')->with('success', __("messages.restore.success"));
+    }
+
+    public function destroyAll(){
+        Category::onlyTrashed()->forceDelete();
+
+        return redirect()->route('categories.index')->with('success', __("messages.delete.success"));
+    }
+
+    public function restoreAll(){
+        Category::onlyTrashed()->restore();
+        return redirect()->route('categories.index')->with('success', __("messages.restore.success"));
     }
 }

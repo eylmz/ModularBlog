@@ -13,13 +13,7 @@
 
     @if (session()->has('success'))
         <div class="alert alert-success">
-            @if(session('success') == 'create')
-                Kategori başarıyla eklendi!
-            @elseif(session('success') == 'update')
-                Kategori başarıyla düzenlendi!
-            @elseif(session('success') == 'delete')
-                Kategori başarıyla silindi!
-            @endif
+            {{ session()->get('success') }}
         </div>
     @endif
 
@@ -27,7 +21,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Etiketler
+                    Etiketler <a href="{{ route('tags.trashes') }}" class="pull-right">Çöp Kutusu ({{ $trashCount }})</a>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">

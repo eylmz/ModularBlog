@@ -21,7 +21,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Kategoriler <a href="{{ route('categories.trashes') }}" class="pull-right">Çöp Kutusu ({{ $trashCount }})</a>
+                    Kategoriler <a href="{{ route('categories.index') }}" class="pull-right">Kategoriler ({{ $categoryCount }})</a>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
@@ -31,7 +31,7 @@
                             <tr>
                                 <th>Kategori Adı</th>
                                 <th>Yazılar</th>
-                                <th style="width: 100px">İşlem</th>
+                                <th style="width: 140px">İşlem</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -40,8 +40,8 @@
                                     <td>{{ $category->name }}</td>
                                     <td class="text-center">{{ $category->posts()->count() }}</td>
                                     <td>
-                                        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-primary btn-sm">Düzenle</a>
-                                        <a href="{{ route('categories.destroy', $category->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Emin misiniz?')">Sil</a>
+                                        <a href="{{ route('categories.restore', $category->id) }}" class="btn btn-primary btn-sm">Geri Yükle</a>
+                                        <a href="{{ route('categories.forceDestroy', $category->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Emin misiniz?')">Kalıcı Sil</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -55,6 +55,10 @@
                 <!-- /.table-responsive -->
                 </div>
                 <!-- /.panel-body -->
+            </div>
+            <div class="pull-right">
+                <a href="{{ route('categories.restoreAll') }}" class="btn btn-primary btn-sm">Tümünü Geri Yükle</a>
+                <a href="{{ route('categories.destroyAll') }}" class="btn btn-danger btn-sm" onclick="return confirm('Emin misiniz?')">Tümünü Kalıcı Sil</a>
             </div>
             <!-- /.panel -->
         </div>

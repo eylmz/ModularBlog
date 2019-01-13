@@ -17,7 +17,14 @@ class TagController extends Controller
     public function index()
     {
         $tags = Tag::with('posts')->get();
-        return view('tag::index', compact('tags'));
+        $trashCount = Tag::onlyTrashed()->count();
+        return view('tag::index', compact('tags', 'trashCount'));
+    }
+
+    public function trashes(){
+        $tags = Tag::with('posts')->onlyTrashed()->get();
+        $tagCount = Tag::count();
+        return view('tag::trashes', compact('tags', 'tagCount'));
     }
 
     /**
@@ -40,7 +47,7 @@ class TagController extends Controller
         $tag->fill($request->all());
         $tag->save();
 
-        return redirect()->route('tags.index')->with('success', 'create');
+        return redirect()->route('tags.index')->with('success', __('messages.create.success'));
     }
 
     /**
@@ -73,7 +80,7 @@ class TagController extends Controller
         $tag->fill($request->all());
         $tag->save();
 
-        return redirect()->route('tags.index')->with('success', 'update');
+        return redirect()->route('tags.index')->with('success', __('messages.update.success'));
     }
 
     /**
@@ -83,6 +90,27 @@ class TagController extends Controller
     public function destroy($id)
     {
         Tag::destroy($id);
-        return redirect()->route('tags.index')->with('success', 'delete');
+        return redirect()->route('tags.index')->with('success', __('messages.delete.success'));
+    }
+
+    public function forceDestroy($id){
+        Tag::where("id", $id)->forceDelete();
+        return redirect()->route('tags.trashes')->with('success', __("messages.delete.success"));
+    }
+
+    public function restore($id){
+        Tag::withTrashed()->where('id', $id)->restore();
+        return redirect()->route('tags.trashes')->with('success', __("messages.restore.success"));
+    }
+
+    public function destroyAll(){
+        Tag::onlyTrashed()->forceDelete();
+
+        return redirect()->route('tags.index')->with('success', __("messages.delete.success"));
+    }
+
+    public function restoreAll(){
+        Tag::onlyTrashed()->restore();
+        return redirect()->route('tags.index')->with('success', __("messages.restore.success"));
     }
 }
