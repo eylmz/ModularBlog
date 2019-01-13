@@ -52,8 +52,9 @@
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav" id="side-menu">
                     <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard fa-fw"></i> Genel Görünüm</a></li>
-                    <li><a href="{{ route('categories.index') }}"><i class="fa fa-dashboard fa-fw"></i> Kategoriler</a></li>
-                    <li><a href="{{ route('tags.index') }}"><i class="fa fa-dashboard fa-fw"></i> Etiketler</a></li>
+                    <li><a href="{{ route('blogs.index') }}"><i class="fa fa-file fa-fw"></i> Yazılar</a></li>
+                    <li><a href="{{ route('categories.index') }}"><i class="fa fa-folder-open fa-fw"></i> Kategoriler</a></li>
+                    <li><a href="{{ route('tags.index') }}"><i class="fa fa-tags fa-fw"></i> Etiketler</a></li>
                 </ul>
             </div>
             <!-- /.sidebar-collapse -->
