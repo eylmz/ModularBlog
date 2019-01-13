@@ -33,7 +33,7 @@
 
                         <div class="form-group">
                             <label id="name">Etiket Adı</label>
-                            <input class="form-control" name="name" id="name" value="{{ old('name', $category["name"]) }}">
+                            <input class="form-control" name="name" id="name" value="{{ old('name', $tag["name"]) }}">
 
                         </div>
 

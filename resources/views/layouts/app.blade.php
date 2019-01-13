@@ -45,7 +45,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">ModulerBlog</a>
+            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">ModularBlog</a>
         </div>
 
         <div class="navbar-default sidebar" role="navigation">

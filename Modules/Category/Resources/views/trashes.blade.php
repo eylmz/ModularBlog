@@ -21,7 +21,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Kategoriler <a href="{{ route('categories.index') }}" class="pull-right">Kategoriler ({{ $categoryCount }})</a>
+                    Çöp Kutusu <a href="{{ route('categories.index') }}" class="pull-right">Kategoriler ({{ $categoryCount }})</a>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">

@@ -21,7 +21,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Etiketler <a href="{{ route('tags.index') }}" class="pull-right">Etiketler ({{ $tagCount }})</a>
+                    Çöp Kutusu <a href="{{ route('tags.index') }}" class="pull-right">Etiketler ({{ $tagCount }})</a>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
