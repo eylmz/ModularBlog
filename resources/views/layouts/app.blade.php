@@ -55,6 +55,7 @@
                     <li><a href="{{ route('blogs.index') }}"><i class="fa fa-file fa-fw"></i> Yazılar</a></li>
                     <li><a href="{{ route('categories.index') }}"><i class="fa fa-folder-open fa-fw"></i> Kategoriler</a></li>
                     <li><a href="{{ route('tags.index') }}"><i class="fa fa-tags fa-fw"></i> Etiketler</a></li>
+                    <li><a href="{{ route('admin.logout') }}"><i class="fa fa-sign-out fa-fw"></i> Çıkış Yap</a></li>
                 </ul>
             </div>
             <!-- /.sidebar-collapse -->

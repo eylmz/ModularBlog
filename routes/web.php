@@ -11,8 +11,13 @@
 |
 */
 
-Route::get('/', "AdminController@index")->name("admin.dashboard");
+Route::middleware('auth')->group(function (){
+    Route::get('/', "AdminController@index")->name("admin.dashboard");
+    Route::get('/logout', "AdminController@logout")->name("admin.logout");
+});
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes([
+    'register' => false,
+    'verify' => false,
+    'reset' => false
+]);
