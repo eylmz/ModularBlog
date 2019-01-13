@@ -21,29 +21,29 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Yazılar <a href="{{ route('blogs.trashes') }}" class="pull-right">Çöp Kutusu ({{ $trashCount }})</a>
+                    Çöp Kutusu <a href="{{ route('blogs.index') }}" class="pull-right">Yazılar ({{ $postCount }})</a>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
-                    @if($posts->count())
+                    @if($trashes->count())
                         <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                             <tr>
                                 <th>Yazı Adı</th>
                                 <th>Kategoriler</th>
                                 <th>Etiketler</th>
-                                <th style="width: 100px">İşlem</th>
+                                <th style="width: 140px">İşlem</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($posts as $post)
+                            @foreach($trashes as $post)
                                 <tr>
                                     <td>{{ $post->name }}</td>
                                     <td class="text-center">{{ $post->categories()->count() }}</td>
                                     <td class="text-center">{{ $post->tags()->count() }}</td>
                                     <td>
-                                        <a href="{{ route('blogs.edit', $post->id) }}" class="btn btn-primary btn-sm">Düzenle</a>
-                                        <a href="{{ route('blogs.destroy', $post->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Emin misiniz?')">Sil</a>
+                                        <a href="{{ route('blogs.restore', $post->id) }}" class="btn btn-primary btn-sm">Geri Yükle</a>
+                                        <a href="{{ route('blogs.forceDestroy', $post->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Emin misiniz?')">Kalıcı Sil</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -51,12 +51,16 @@
                         </table>
                     @else
                         <div class="alert alert-info">
-                            Henüz hiç yazı eklenmemiş!
+                            Henüz hiç kategori eklenmemiş!
                         </div>
                 @endif
                 <!-- /.table-responsive -->
                 </div>
                 <!-- /.panel-body -->
+            </div>
+            <div class="pull-right">
+                <a href="{{ route('blogs.restoreAll') }}" class="btn btn-primary btn-sm">Tümünü Geri Yükle</a>
+                <a href="{{ route('blogs.destroyAll') }}" class="btn btn-danger btn-sm" onclick="return confirm('Emin misiniz?')">Tümünü Kalıcı Sil</a>
             </div>
             <!-- /.panel -->
         </div>

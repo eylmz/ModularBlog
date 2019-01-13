@@ -3,11 +3,13 @@
 namespace Modules\Blog\Http\Controllers;
 
 use Modules\Blog\Entities\Post;
+use Modules\Blog\Http\Requests\StoreBlog;
 use Modules\Category\Entities\Category;
 use Modules\Tag\Entities\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
@@ -18,7 +20,14 @@ class BlogController extends Controller
     public function index()
     {
         $posts = Post::with(["categories", "tags"])->get();
-        return view('blog::index', compact('posts'));
+        $trashCount = Post::onlyTrashed()->count();
+        return view('blog::index', compact('posts', 'trashCount'));
+    }
+
+    public function trashes(){
+        $trashes = Post::with(['categories', 'tags'])->onlyTrashed()->get();
+        $postCount = Post::count();
+        return view('blog::trashes', compact('trashes', 'postCount'));
     }
 
     /**
@@ -27,16 +36,30 @@ class BlogController extends Controller
      */
     public function create()
     {
-        return view('blog::create');
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('blog::create', compact('categories', 'tags'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     * @param  Request $request
+     * Show the form for creating a new resource.
      * @return Response
      */
-    public function store(Request $request)
+    public function store(StoreBlog $request)
     {
+        $categories = Category::findMany($request->categories);
+        $tags = Tag::findMany($request->tags);
+
+        DB::transaction(function() use ($request, $categories, $tags)  {
+            $post = new Post();
+            $post->fill($request->all());
+            $post->save();
+
+            $post->categories()->saveMany($categories);
+            $post->tags()->saveMany($tags);
+        });
+
+        return redirect()->route('blogs.index')->with('success', __("messages.create.success"));
     }
 
     /**
@@ -52,9 +75,15 @@ class BlogController extends Controller
      * Show the form for editing the specified resource.
      * @return Response
      */
-    public function edit()
+    public function edit($id)
     {
-        return view('blog::edit');
+        $post = Post::with(["tags", "categories"])->findOrFail($id);
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        $categoryIDs = $post->categories->pluck('id')->toArray();
+        $tagIDs = $post->tags->pluck('id')->toArray();
+        return view('blog::edit', compact('post', 'categories', 'tags', 'categoryIDs', 'tagIDs'));
     }
 
     /**
@@ -62,15 +91,64 @@ class BlogController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function update(Request $request)
+    public function update(StoreBlog $request, $id)
     {
+        $categories = Category::findMany($request->categories);
+        $tags = Tag::findMany($request->tags);
+
+        DB::transaction(function() use ($request, $categories, $tags, $id)  {
+            $post = Post::findOrFail($id);
+            $post->fill($request->all());
+            $post->save();
+
+            $post->categories()->detach();
+            $post->tags()->detach();
+
+            $post->categories()->saveMany($categories);
+            $post->tags()->saveMany($tags);
+        });
+
+        return redirect()->route('blogs.index')->with('success', __("messages.update.success"));
     }
 
     /**
      * Remove the specified resource from storage.
      * @return Response
      */
-    public function destroy()
+    public function destroy($id)
     {
+        Post::destroy($id);
+        return redirect()->route('blogs.index')->with('success', __("messages.delete.success"));
+    }
+
+    public function forceDestroy($id){
+        $post = Post::withTrashed()->findOrFail($id);
+
+        $post->categories()->detach();
+        $post->tags()->detach();
+
+        $post->forceDelete();
+        return redirect()->route('blogs.trashes')->with('success', __("messages.delete.success"));
+    }
+
+    public function restore($id){
+        Post::withTrashed()->where('id', $id)->restore();
+        return redirect()->route('blogs.trashes')->with('success', __("messages.restore.success"));
+    }
+
+    public function destroyAll(){
+        $posts = Post::with(["categories", "tags"])->onlyTrashed()->get();
+        foreach ($posts as $post){
+            $post->categories()->detach();
+            $post->tags()->detach();
+            $post->forceDelete();
+        }
+
+        return redirect()->route('blogs.index')->with('success', __("messages.delete.success"));
+    }
+
+    public function restoreAll(){
+        Post::onlyTrashed()->restore();
+        return redirect()->route('blogs.index')->with('success', __("messages.restore.success"));
     }
 }
